@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitTrace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>GitTrace</h1>
+
+    <!-- Users List -->
+    <div id="userList" class="user-list"></div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <img id="modalAvatar" src="" alt="Avatar" class="avatar-large">
+      <h2 id="modalUsername"></h2>
+      <p id="modalBio"></p>
+      <p>Followers: <span id="modalFollowers">0</span></p>
+      <p>Following: <span id="modalFollowing">0</span></p>
+      <p>Public Repos: <span id="modalRepos">0</span></p>
+      <a id="modalProfileLink" href="#" target="_blank" class="btn">Go to GitHub</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
