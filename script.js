@@ -35,12 +35,38 @@ function setLoading(text) {
   }
 }
 
-/* GitHub API */
+/* Cache helpers — store fetched profiles in localStorage for 1 hour */
+const CACHE_KEY = 'gittrace_cache';
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function getCache() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch { return {}; }
+}
+function setCache(obj) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(obj)); } catch {}
+}
+function getCachedUser(username) {
+  const c = getCache();
+  const entry = c[username.toLowerCase()];
+  if (entry && Date.now() - entry.ts < CACHE_TTL) return entry.data;
+  return null;
+}
+function setCachedUser(username, data) {
+  const c = getCache();
+  c[username.toLowerCase()] = { data, ts: Date.now() };
+  setCache(c);
+}
+
+/* GitHub API — with cache */
 async function fetchUser(username) {
+  const cached = getCachedUser(username);
+  if (cached) return cached;
   try {
     const res = await fetch('https://api.github.com/users/' + username);
     if (!res.ok) return null;
-    return await res.json();
+    const data = await res.json();
+    setCachedUser(username, data);
+    return data;
   } catch { return null; }
 }
 
@@ -71,6 +97,9 @@ async function loadAllUsers() {
     if (loaded < users.length) await new Promise(r => setTimeout(r, 150));
   }
   setLoading(null);
+  if (userData.length === 0 && users.length > 0) {
+    setLoading('GitHub API rate limit reached. Cached data will appear once available. Try again shortly.');
+  }
   renderLeaderboard();
   renderExplore();
   renderCharts();
