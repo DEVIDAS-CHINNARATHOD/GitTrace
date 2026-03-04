@@ -3,29 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitTrace</title>
+  <title>GitTrace - GitHub Developer Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <div class="grid-bg"></div>
 
   <div class="container">
-    <h1>GitTrace</h1>
 
-    <!-- Users List -->
-    <div id="userList" class="user-list"></div>
+    <!-- Header -->
+    <header class="header">
+      <h1 class="title">GitTrace</h1>
+      <p class="subtitle">Developer Analytics Dashboard</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="leaderboard">Leaderboard</button>
+      <button class="tab-btn" data-tab="explore">Explore</button>
+      <button class="tab-btn" data-tab="add-user">Add User</button>
+    </nav>
+
+    <!-- ── Leaderboard Tab ── -->
+    <section id="leaderboardSection" class="tab-section active">
+
+      <div id="loadingIndicator" class="loading-bar">
+        <div class="spinner"></div>
+        <span class="load-text">Fetching developer data...</span>
+      </div>
+
+      <div class="filter-container">
+        <button class="filter-btn active" data-filter="followers">Followers</button>
+        <button class="filter-btn" data-filter="repos">Repositories</button>
+        <button class="filter-btn" data-filter="following">Following</button>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3 class="chart-title">Top Performers</h3>
+          <canvas id="topPerformersChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-title">Community Stats</h3>
+          <canvas id="statsDistributionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="leaderboard-card">
+        <h2 class="leaderboard-title" id="leaderboardTitleMain">Top by Activity</h2>
+        <div id="leaderboardMain" class="leaderboard-list"></div>
+      </div>
+
+    </section>
+
+    <!-- ── Explore Tab ── -->
+    <section id="exploreSection" class="tab-section">
+      <div id="userList" class="user-grid"></div>
+    </section>
+
+    <!-- ── Add User Tab ── -->
+    <section id="add-userSection" class="tab-section">
+      <div class="add-form-wrap">
+        <h2 class="form-heading">Add GitHub User</h2>
+        <div class="form-group">
+          <input type="text" id="userInput" placeholder="GitHub username" class="form-input" autocomplete="off">
+          <button id="addUserBtn" class="btn btn-primary">Add User</button>
+        </div>
+        <div id="addMsg" class="msg"></div>
+      </div>
+    </section>
+
   </div>
 
   <!-- Profile Modal -->
-  <div id="profileModal" class="modal">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <img id="modalAvatar" src="" alt="Avatar" class="avatar-large">
-      <h2 id="modalUsername"></h2>
-      <p id="modalBio"></p>
-      <p>Followers: <span id="modalFollowers">0</span></p>
-      <p>Following: <span id="modalFollowing">0</span></p>
-      <p>Public Repos: <span id="modalRepos">0</span></p>
-      <a id="modalProfileLink" href="#" target="_blank" class="btn">Go to GitHub</a>
+  <div id="profileModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <button id="closeModal" class="modal-close" aria-label="Close">&times;</button>
+      <img id="modalAvatar" src="" alt="Avatar" class="modal-avatar">
+      <h2 id="modalUsername" class="modal-name"></h2>
+      <p id="modalBio" class="modal-bio"></p>
+      <div class="modal-stats">
+        <div class="mstat"><span class="mstat-label">Followers</span><span id="modalFollowers" class="mstat-value">0</span></div>
+        <div class="mstat"><span class="mstat-label">Following</span><span id="modalFollowing" class="mstat-value">0</span></div>
+        <div class="mstat"><span class="mstat-label">Repos</span><span id="modalRepos" class="mstat-value">0</span></div>
+      </div>
+      <a id="modalProfileLink" href="#" target="_blank" rel="noopener" class="btn btn-primary">View on GitHub</a>
+    </div>
+  </div>
+
+  <!-- Delete / Edit Modal -->
+  <div id="editUserModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-box modal-box--sm">
+      <button id="closeEditModal" class="modal-close" aria-label="Close">&times;</button>
+      <h2 class="edit-title">Manage User</h2>
+      <p id="editUsername" class="edit-username"></p>
+      <button id="deleteUserBtn" class="btn btn-danger btn-block">Remove from Dashboard</button>
     </div>
   </div>
 
