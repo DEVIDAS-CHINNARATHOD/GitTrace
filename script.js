@@ -107,7 +107,7 @@ async function fetchAllUsers(usernames, concurrency = 6) {
 /* ── State ── */
 let userData      = [];
 let currentFilter = 'followers';
-let commitsLoaded = false;
+
 
 /* ── DOM refs ── */
 const leaderboardList  = document.getElementById('leaderboardMain');
