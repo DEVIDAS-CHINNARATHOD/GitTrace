@@ -1,20 +1,11 @@
-/* ── GitTrace script.js  (no server — pure static / localStorage) ─────── */
-
-/* ── Default user list (seeded once into localStorage) ── */
-const DEFAULT_USERS = [
-  "DEVIDAS-CHINNARATHOD","muqeet1001","bsrajputx95","niteshsaini9568",
-  "thorgnt12","Gurukiran-B","RahulMirji","Shivaprasadrathod","savansr",
-  "torvalds","hackerx95","vivek9patel","pavankalyan662","heena024",
-  "bhargu07","Indushree02","Harshagowdasv","mqt-dev07","iAmAjayTeli",
-  "kunal-kushwaha","loveBabbar","chandansgowda","HarshaBM-25",
-  "Sarahfaatima","yesra29","ahammed2006","keerthanakh89",
-  "Keninjavelas","Zuhaib-01","NamelessMonsterr","Hrit66"
-];
+/* ── GitTrace script.js  (fetches user list from gitusers.json) ── */
 
 const CACHE_KEY     = 'gittrace_cache_v2';
 const COMMITS_KEY   = 'gittrace_commits_v1';
 const CACHE_TTL     = 60 * 60 * 1000;       // 1 hour — profiles
 const COMMITS_TTL   = 6  * 60 * 60 * 1000; // 6 hours — commit counts
+
+let DEFAULT_USERS = [];
 
 /* ── GitHub API profile cache ── */
 function getCache()              { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch { return {}; } }
@@ -153,6 +144,18 @@ function renderSkeletons(count) {
 /* ── Load & render all users ── */
 async function loadAllUsers() {
   userData = [];
+  setLoading('Loading user list from gitusers.json…', 0);
+
+  try {
+    const res = await fetch('gitusers.json');
+    if (!res.ok) throw new Error('Failed to load gitusers.json');
+    DEFAULT_USERS = await res.json();
+  } catch (err) {
+    setLoading('Error loading gitusers.json. Check file path.');
+    console.error(err);
+    return;
+  }
+
   if (DEFAULT_USERS.length === 0) { setLoading(null); renderAll(); return; }
 
   renderSkeletons(DEFAULT_USERS.length);
